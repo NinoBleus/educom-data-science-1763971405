@@ -1,7 +1,7 @@
-"continent","percentage_world_population"
-"Africa",17.869999999999997
-"Asia",59.19
-"Europe",9.33
-"North America",7.51
-"Oceania",0.55
-"South America",5.4799999999999995
+continent,percentage_world_population
+Africa,17.87
+Asia,59.19
+Europe,9.33
+North America,7.51
+Australia,0.55
+South America,5.48
