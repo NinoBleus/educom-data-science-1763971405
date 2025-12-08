@@ -2,7 +2,7 @@
 ---
 ## V1
 ```bash
-jq '.[] | {country: .country, population_1970: .population_1970, area_km2: .area_km2, population_density: .population_density, population_density_1970: .population_1970/.area_km2}' < world-population.json > opdracht1.json
+jq 'map({country: .country, population_1970: .population_1970, area_km2: .area_km2, population_density: .population_density, population_density_1970: .population_1970/.area_km2})' < world-population.json > opdracht1.json
 ```
 ## Output
 ```json
