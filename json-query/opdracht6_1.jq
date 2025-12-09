@@ -1,4 +1,4 @@
-map({ country: .country, 
+map({   country: .country, 
         population_1970: .population_1970, 
         area_km2: .area_km2, 
         population_density: .population_density, 
