@@ -1833,19 +1833,125 @@ jq 'group_by(.continent) | map({continent: .[0].continent, growth_percentage_com
 ```
 # Opdracht 6
 ## V1
-```bash
-
-```
-## Output
-```json
-
-```
+See .jq files
 # Opdracht 7
 ## V1
 ```bash
-
+jq '
+  map({
+    rank: .rank,
+    cca3: .cca3,
+    country: .country,
+    capital: .capital,
+    continent: .continent,
+    population:
+      (to_entries
+       | map(
+           select(.key | test("^population_[0-9]{4}$"))
+           | { year: (.key | ltrimstr("population_")), amount: .value }
+         )
+      ),
+    area_km2: .area_km2,
+    population_density: .population_density,
+    population_growth_rate: .population_growth_rate,
+    percentage_world_population: .percentage_world_population
+  })
+' world-population.json
 ```
 ## Output
 ```json
-
+[
+  {...},
+  {
+    "rank": 79,
+    "cca3": "TUN",
+    "country": "Tunisia",
+    "capital": "Tunis",
+    "continent": "Africa",
+    "population": [
+      {
+        "year": "2022",
+        "amount": 12356117
+      },
+      {
+        "year": "2020",
+        "amount": 12161723
+      },
+      {
+        "year": "2015",
+        "amount": 11557779
+      },
+      {
+        "year": "2010",
+        "amount": 10895063
+      },
+      {
+        "year": "2000",
+        "amount": 9893316
+      },
+      {
+        "year": "1990",
+        "amount": 8440023
+      },
+      {
+        "year": "1980",
+        "amount": 6578156
+      },
+      {
+        "year": "1970",
+        "amount": 5047404
+      }
+    ],
+    "area_km2": 163610,
+    "population_density": 75.5218,
+    "population_growth_rate": 1.0076,
+    "percentage_world_population": 0.15
+  },
+  {
+    "rank": 18,
+    "cca3": "TUR",
+    "country": "Turkey",
+    "capital": "Ankara",
+    "continent": "Asia",
+    "population": [
+      {
+        "year": "2022",
+        "amount": 85341241
+      },
+      {
+        "year": "2020",
+        "amount": 84135428
+      },
+      {
+        "year": "2015",
+        "amount": 79646178
+      },
+      {
+        "year": "2010",
+        "amount": 73195345
+      },
+      {
+        "year": "2000",
+        "amount": 64113547
+      },
+      {
+        "year": "1990",
+        "amount": 54324142
+      },
+      {
+        "year": "1980",
+        "amount": 44089069
+      },
+      {
+        "year": "1970",
+        "amount": 35540990
+      }
+    ],
+    "area_km2": 783562,
+    "population_density": 108.9145,
+    "population_growth_rate": 1.0067,
+    "percentage_world_population": 1.07
+  },
+  {...}
+]
 ```
