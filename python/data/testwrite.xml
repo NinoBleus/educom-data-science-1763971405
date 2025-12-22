@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ArrayOfPerson>
+  <Person id="1" />
+  <Name>john</Name>
+  <Age>20</Age>
+  <City>apple</City>
+</ArrayOfPerson>
