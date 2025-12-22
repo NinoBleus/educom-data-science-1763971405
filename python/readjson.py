@@ -22,8 +22,19 @@ def read_json(file_path: str) -> list:
 
     return []
 
-# def json_to_object():
-
+def json_to_object(json):
+    people: list[Person] = []
+    for person in json:
+        people.append(
+            Person(
+                id=int(person["Id"]),
+                name=person["Name"],
+                age=int(person["Age"]),
+                city=person["City"],
+            )
+        )
+    for personObject in people:
+        print(personObject)
 
 
 def main():
@@ -35,8 +46,10 @@ def main():
     succes = read_json(path)
     if succes:
         print('Succesfully read text from json')
+        json_to_object(succes)
     else:
         print("Couldn't read text from file")
+    
 
 
 if __name__ == "__main__":
