@@ -54,21 +54,28 @@ def get_persons_advanced(db_connection) -> list[Person]:
     
     return persons
 
-def add_or_update_person_to_db(person: Person, db_connection) -> tuple[Person, bool]:
+def add_or_update_person_to_db(person: object, db_connection) -> tuple[object, bool]:
 
     db_cursor = db_connection.cursor()
+    table = type(person).__name__.lower()
+    data = dict(person.__dict__)
+    person_id = data.get("id")
+    columns = [key for key in data.keys() if key != "id"]
 
-    if person.id:
-        query = "UPDATE person SET name=%s, age=%s, city=%s WHERE id=%s"
-        values = [person.name, person.age, person.city, person.id]
+    if person_id:
+        set_clause = ", ".join(f"{column}=%s" for column in columns)
+        query = f"UPDATE {table} SET {set_clause} WHERE id=%s"
+        values = [data[column] for column in columns] + [person_id]
     else:
-        query = "INSERT INTO person (name, age, city) VALUES (%s, %s, %s)"
-        values = [person.name, person.age, person.city]
+        placeholders = ", ".join(["%s"] * len(columns))
+        column_clause = ", ".join(columns)
+        query = f"INSERT INTO {table} ({column_clause}) VALUES ({placeholders})"
+        values = [data[column] for column in columns]
 
     db_cursor.execute(query, values)
     changed = db_cursor.rowcount > 0
 
-    if not person.id:
+    if not person_id:
         person.id = db_cursor.lastrowid
         
     db_connection.commit()
