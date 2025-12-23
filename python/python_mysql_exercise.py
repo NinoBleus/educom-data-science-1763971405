@@ -13,6 +13,7 @@ class Person:
     age: int
     city: str
 
+
 def get_connection():  
     db_connection = mysql.connector.connect(
         host = os.getenv("DATABASE_host"),
@@ -54,6 +55,7 @@ def get_persons_advanced(db_connection) -> list[Person]:
     
     return persons
 
+
 def add_or_update_person_to_db(person: object, db_connection) -> tuple[object, bool]:
 
     db_cursor = db_connection.cursor()
@@ -83,6 +85,7 @@ def add_or_update_person_to_db(person: object, db_connection) -> tuple[object, b
 
     return person, changed
 
+
 def read_json(file_path: str) -> list:
 
     try:
@@ -95,6 +98,7 @@ def read_json(file_path: str) -> list:
         print('Failed to decode json file: ', e)
 
     return []
+
 
 def json_to_object(json) -> list[Person]:
     people: list[Person] = []
@@ -149,10 +153,7 @@ def main():
         print("Successfully done operation.")
     else:
         print("Failed to do operation.")
-        
-    
-    
-    
+
     
 if __name__ == "__main__":
     main()
