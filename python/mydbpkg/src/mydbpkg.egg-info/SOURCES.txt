@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+src/mydbpkg/__init__.py
+src/mydbpkg/db.py
+src/mydbpkg/repository.py
+src/mydbpkg.egg-info/PKG-INFO
+src/mydbpkg.egg-info/SOURCES.txt
+src/mydbpkg.egg-info/dependency_links.txt
+src/mydbpkg.egg-info/requires.txt
+src/mydbpkg.egg-info/top_level.txt
