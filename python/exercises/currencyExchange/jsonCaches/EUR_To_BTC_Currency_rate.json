@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "terms": "https://fxratesapi.com/legal/terms-conditions",
+  "privacy": "https://fxratesapi.com/legal/privacy-policy",
+  "timestamp": 1767703380,
+  "date": "2026-01-06T12:43:00.000Z",
+  "base": "EUR",
+  "rates": {
+    "BTC": 1.2479e-05
+  }
+}
