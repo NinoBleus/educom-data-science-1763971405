@@ -1,5 +1,6 @@
 import http.client
 from dotenv import load_dotenv
+import duckdb
 import os, json, datetime
 
 # Load env variables
@@ -8,6 +9,7 @@ load_dotenv()
 # Defines
 FILE_PATH_FOLDER_NAME= "./jsonCaches/"
 FILE_PATH_CURRENCIES = "./jsonCaches/currencies.json"
+DB_PATH = "./fxrates.duckdb"
 
 
 # Begin FxRateApi Functions
@@ -87,6 +89,75 @@ def check_modified_within_time(file_path: str, hours: int = 1) -> bool:
 # End Json Functions
 
 
+# Begin DuckDB Functions
+
+def _ensure_db_schema(con) -> None:
+    con.execute(
+        """
+        create table if not exists fx_rates (
+            base varchar,
+            currency varchar,
+            rate double,
+            timestamp bigint,
+            rate_date varchar
+        )
+        """
+    )
+    con.execute(
+        """
+        create table if not exists fx_rate_snapshots (
+            fetched_at timestamp,
+            base varchar,
+            currencies varchar,
+            rate_date varchar,
+            timestamp bigint,
+            payload_json varchar
+        )
+        """
+    )
+
+
+def save_rates_to_db(rates_data: dict, currencies: str, db_path: str = DB_PATH) -> bool:
+    rates = rates_data.get("rates")
+    if not isinstance(rates, dict) or not rates:
+        return False
+
+    base = rates_data.get("base")
+    ts = rates_data.get("timestamp")
+    rate_date = rates_data.get("date")
+    if not rate_date and ts:
+        rate_date = datetime.datetime.fromtimestamp(ts, datetime.timezone.utc).date().isoformat()
+    payload_json = json.dumps(rates_data, separators=(",", ":"))
+    rows = [(base, code, rate, ts, rate_date) for code, rate in rates.items()]
+
+    try:
+        with duckdb.connect(db_path) as con:
+            _ensure_db_schema(con)
+            con.execute(
+                """
+                insert into fx_rate_snapshots
+                (fetched_at, base, currencies, rate_date, timestamp, payload_json)
+                values (current_timestamp, ?, ?, ?, ?, ?)
+                """,
+                [base, currencies, rate_date, ts, payload_json],
+            )
+            if rate_date:
+                con.execute(
+                    "delete from fx_rates where base = ? and rate_date = ?",
+                    [base, rate_date],
+                )
+            con.executemany(
+                "insert into fx_rates values (?, ?, ?, ?, ?)",
+                rows,
+            )
+        return True
+    except duckdb.Error as e:
+        print("Failed to write rates to DuckDB:", e)
+        return False
+
+# End DuckDB Functions
+
+
 
 # Begin Business Logic
 
@@ -116,6 +187,7 @@ def show_currency_rates(currencies: str, base: str = "EUR", format: str = "json"
     else:
         currencies_rates_bytes = get_exchange_rate(currencies=currencies, base=base, format=format)
         currencies_rates_data = json.loads(currencies_rates_bytes)
+        save_rates_to_db(currencies_rates_data, currencies)
         write_json(file_path_name, currencies_rates_data)
         cached_currencies_rates = read_json(file_path_name)
         # print(cached_currencies_rates)
