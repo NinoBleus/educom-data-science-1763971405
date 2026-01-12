@@ -1,0 +1,5 @@
+{
+  "base": "EUR",
+  "format": "json",
+  "list_currencies": false
+}
